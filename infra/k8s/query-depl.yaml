@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: query-depl
+spec:
+  replicas: 1
+  selector:
+    # busca todos os pods com a label 'app: query', isso informa qual pod deve ser gerenciado pelo deployment
+    matchLabels:
+      app: query
+  template: # especifica as configurações de um pod
+    metadata:
+      labels: # queremos que um pod tenha a label 'app: query'
+        app: query
+    spec:
+      containers:
+        - name: query
+          image: alxrdev/query
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: query-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: query
+  ports:
+    - name: query
+      protocol: TCP
+      port: 4002
+      targetPort: 4002

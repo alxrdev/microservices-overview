@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: posts-depl
+spec:
+  replicas: 1
+  selector:
+    # busca todos os pods com a label 'app: posts', isso informa qual pod deve ser gerenciado pelo deployment
+    matchLabels:
+      app: posts
+  template: # especifica as configurações de um pod
+    metadata:
+      labels: # queremos que um pod tenha a label 'app: posts'
+        app: posts
+    spec:
+      containers:
+        - name: posts
+          image: alxrdev/posts
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: posts-clusterip-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: posts
+  ports:
+    - name: posts
+      protocol: TCP
+      port: 4000
+      targetPort: 4000

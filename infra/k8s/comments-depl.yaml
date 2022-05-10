@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: comments-depl
+spec:
+  replicas: 1
+  selector:
+    # busca todos os pods com a label 'app: comments', isso informa qual pod deve ser gerenciado pelo deployment
+    matchLabels:
+      app: comments
+  template: # especifica as configurações de um pod
+    metadata:
+      labels: # queremos que um pod tenha a label 'app: comments'
+        app: comments
+    spec:
+      containers:
+        - name: comments
+          image: alxrdev/comments
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: comments-srv
+spec:
+  type: ClusterIP
+  selector:
+    app: comments
+  ports:
+    - name: comments
+      protocol: TCP
+      port: 4001
+      targetPort: 4001
